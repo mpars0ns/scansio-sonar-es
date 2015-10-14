@@ -1,0 +1,14 @@
+{
+      "host" : {
+        "properties" : {
+          "host": {"type": "ip", "index": "analyzed"},
+          "hash": {"type": "string"},
+          "first_seen": {"type": "date", "format": "dateOptionalTime"},
+          "last_seen": {"type": "date", "format": "dateOptionalTime"},
+          "asn": {"type": "string", "analyzer": "keyword", "index": "analyzed"},
+          "country_code": {"type": "string", "analyzer": "keyword", "index": "analyzed"},
+          "country_name": {"type": "string", "analyzer": "keyword", "index": "analyzed"},
+          "source": {"type": "string"}
+        }
+      }
+    }

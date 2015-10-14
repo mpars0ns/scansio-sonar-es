@@ -1,0 +1,419 @@
+{
+      "cert" : {
+        "properties" : {
+          "SignatureAlgorithm" : {
+            "type" : "string"
+          },
+          "bits" : {
+            "type" : "long"
+          },
+          "extensions" : {
+            "properties" : {
+              "authorityInfoAccess" : {
+                "type" : "string"
+              },
+              "authorityKeyIdentifier" : {
+                "type" : "string"
+              },
+              "basicConstraints" : {
+                "type" : "string"
+              },
+              "certificatePolicies" : {
+                "type" : "string"
+              },
+              "crlDistributionPoints" : {
+                "type" : "string"
+              },
+              "extendedKeyUsage" : {
+                "type" : "string"
+              },
+              "freshestCRL" : {
+                "type" : "string"
+              },
+              "inhibitAnyPolicy" : {
+                "type" : "string"
+              },
+              "issuerAltName" : {
+                "type" : "string"
+              },
+              "issuingDistributionPoint" : {
+                "type" : "string"
+              },
+              "keyUsage" : {
+                "type" : "string"
+              },
+              "nameConstraints" : {
+                "type" : "string"
+              },
+              "nsBaseUrl" : {
+                "type" : "string"
+              },
+              "nsCaPolicyUrl" : {
+                "type" : "string"
+              },
+              "nsCaRevocationUrl" : {
+                "type" : "string"
+              },
+              "nsCertType" : {
+                "type" : "string"
+              },
+              "nsComment" : {
+                "type" : "string"
+              },
+              "nsRenewalUrl" : {
+                "type" : "string"
+              },
+              "nsRevocationUrl" : {
+                "type" : "string"
+              },
+              "nsSslServerName" : {
+                "type" : "string"
+              },
+              "policyConstraints" : {
+                "type" : "string"
+              },
+              "policyMappings" : {
+                "type" : "string"
+              },
+              "privateKeyUsagePeriod" : {
+                "type" : "string"
+              },
+              "proxyCertInfo" : {
+                "type" : "string"
+              },
+              "subjectAltName" : {
+                "type" : "string"
+              },
+              "subjectInfoAccess" : {
+                "type" : "string"
+              },
+              "subjectKeyIdentifier" : {
+                "type" : "string"
+              }
+            }
+          },
+          "hash_id" : {
+            "type" : "string"
+          },
+          "issuer" : {
+            "properties" : {
+              "C" : {
+                "type" : "string",
+                "index": "analyzed",
+                "analyzer": "keyword"
+              },
+              "CN" : {
+                "type" : "string",
+                "index": "analyzed",
+                "analyzer": "keyword"
+              },
+              "DC" : {
+                "type" : "string"
+              },
+              "GN" : {
+                "type" : "string"
+              },
+              "ITU-T" : {
+                "type" : "string"
+              },
+              "L" : {
+                "type" : "string"
+              },
+              "Mail" : {
+                "type" : "string"
+              },
+              "O" : {
+                "type" : "string",
+                "index": "analyzed",
+                "analyzer": "keyword"
+              },
+              "OU" : {
+                "type" : "string",
+                "index": "analyzed",
+                "analyzer": "keyword"
+              },
+              "SN" : {
+                "type" : "string",
+                "index": "analyzed",
+                "analyzer": "keyword"
+              },
+              "ST" : {
+                "type" : "string"
+              },
+              "UID" : {
+                "type" : "string"
+              },
+              "UNDEF" : {
+                "type" : "string"
+              },
+              "authorityKeyIdentifier" : {
+                "type" : "string"
+              },
+              "basicConstraints" : {
+                "type" : "string"
+              },
+              "businessCategory" : {
+                "type" : "string"
+              },
+              "challengePassword" : {
+                "type" : "string"
+              },
+              "crlDistributionPoints" : {
+                "type" : "string"
+              },
+              "description" : {
+                "type" : "string"
+              },
+              "dmdName" : {
+                "type" : "string"
+              },
+              "dnQualifier" : {
+                "type" : "string"
+              },
+              "emailAddress" : {
+                "type" : "string"
+              },
+              "extendedKeyUsage" : {
+                "type" : "string"
+              },
+              "generationQualifier" : {
+                "type" : "string"
+              },
+              "houseIdentifier" : {
+                "type" : "string"
+              },
+              "initials" : {
+                "type" : "string"
+              },
+              "mail" : {
+                "type" : "string"
+              },
+              "name" : {
+                "type" : "string"
+              },
+              "nsBaseUrl" : {
+                "type" : "string"
+              },
+              "nsCaRevocationUrl" : {
+                "type" : "string"
+              },
+              "nsCertType" : {
+                "type" : "string"
+              },
+              "nsComment" : {
+                "type" : "string"
+              },
+              "postalAddress" : {
+                "type" : "string"
+              },
+              "postalCode" : {
+                "type" : "string",
+                "index": "analyzed",
+                "analyzer": "keyword"
+              },
+              "pseudonym" : {
+                "type" : "string"
+              },
+              "role" : {
+                "type" : "string"
+              },
+              "serialNumber" : {
+                "type" : "string"
+              },
+              "street" : {
+                "type" : "string"
+              },
+              "subjectAltName" : {
+                "type" : "string"
+              },
+              "subjectKeyIdentifier" : {
+                "type" : "string"
+              },
+              "telephoneNumber" : {
+                "type" : "string"
+              },
+              "title" : {
+                "type" : "string"
+              },
+              "unstructuredAddress" : {
+                "type" : "string"
+              },
+              "unstructuredName" : {
+                "type" : "string"
+              },
+              "x500UniqueIdentifier" : {
+                "type" : "string"
+              }
+            }
+          },
+          "md5" : {
+            "type" : "string"
+          },
+          "notAfter" : {
+            "type" : "date",
+            "format" : "dateOptionalTime"
+          },
+          "notBefore" : {
+            "type" : "date",
+            "format" : "dateOptionalTime"
+          },
+          "scansio_date" : {
+            "type" : "date",
+            "format" : "dateOptionalTime"
+          },
+          "sha1" : {
+            "type" : "string"
+          },
+          "sha256" : {
+            "type" : "string"
+          },
+          "subject" : {
+            "properties" : {
+              "C" : {
+                "type" : "string",
+                "index": "analyzed",
+                "analyzer": "keyword"
+              },
+              "CN" : {
+                "type" : "string",
+                "index": "analyzed",
+                "analyzer": "keyword"
+              },
+              "DC" : {
+                "type" : "string"
+              },
+              "GN" : {
+                "type" : "string"
+              },
+              "ITU-T" : {
+                "type" : "string"
+              },
+              "L" : {
+                "type" : "string"
+              },
+              "Mail" : {
+                "type" : "string"
+              },
+              "O" : {
+                "type" : "string",
+                "index": "analyzed",
+                "analyzer": "keyword"
+              },
+              "OU" : {
+                "type" : "string",
+                "index": "analyzed",
+                "analyzer": "keyword"
+              },
+              "SN" : {
+                "type" : "string"
+              },
+              "ST" : {
+                "type" : "string"
+              },
+              "UID" : {
+                "type" : "string"
+              },
+              "UNDEF" : {
+                "type" : "string"
+              },
+              "authorityKeyIdentifier" : {
+                "type" : "string"
+              },
+              "basicConstraints" : {
+                "type" : "string"
+              },
+              "businessCategory" : {
+                "type" : "string"
+              },
+              "challengePassword" : {
+                "type" : "string"
+              },
+              "crlDistributionPoints" : {
+                "type" : "string"
+              },
+              "description" : {
+                "type" : "string"
+              },
+              "dnQualifier" : {
+                "type" : "string"
+              },
+              "emailAddress" : {
+                "type" : "string"
+              },
+              "extendedKeyUsage" : {
+                "type" : "string"
+              },
+              "generationQualifier" : {
+                "type" : "string"
+              },
+              "houseIdentifier" : {
+                "type" : "string"
+              },
+              "id-pda-dateOfBirth" : {
+                "type" : "string"
+              },
+              "initials" : {
+                "type" : "string"
+              },
+              "mail" : {
+                "type" : "string"
+              },
+              "name" : {
+                "type" : "string"
+              },
+              "nsCertType" : {
+                "type" : "string"
+              },
+              "nsComment" : {
+                "type" : "string"
+              },
+              "postOfficeBox" : {
+                "type" : "string"
+              },
+              "postalAddress" : {
+                "type" : "string"
+              },
+              "postalCode" : {
+                "type" : "string"
+              },
+              "pseudonym" : {
+                "type" : "string"
+              },
+              "role" : {
+                "type" : "string"
+              },
+              "serialNumber" : {
+                "type" : "string"
+              },
+              "street" : {
+                "type" : "string"
+              },
+              "subjectAltName" : {
+                "type" : "string"
+              },
+              "subjectKeyIdentifier" : {
+                "type" : "string"
+              },
+              "telephoneNumber" : {
+                "type" : "string"
+              },
+              "title" : {
+                "type" : "string"
+              },
+              "unstructuredAddress" : {
+                "type" : "string"
+              },
+              "unstructuredName" : {
+                "type" : "string"
+              },
+              "x500UniqueIdentifier" : {
+                "type" : "string"
+              }
+            }
+          },
+          "version" : {
+            "type" : "long"
+          }
+        }
+      }
+    }
