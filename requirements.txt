@@ -1,0 +1,3 @@
+pygeoip==0.3.2
+requests
+elasticsearch==2.0.0

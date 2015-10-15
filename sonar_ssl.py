@@ -153,7 +153,7 @@ def main(argv):
                                 newcerts.write(phys_file.content)
                                 newcerts.close()
                                 newcerts = open('{f}'.format(f=certfile))
-                                h = hashlib.sha1
+                                h = hashlib.sha1()
                                 h.update(newcerts.read())
                                 sha1 = h.hexdigest()
                                 newcerts.close()
