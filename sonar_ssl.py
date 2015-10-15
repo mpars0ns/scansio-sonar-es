@@ -107,6 +107,8 @@ def parse_hosts_file(gzfile, queue):
             host_data['host'] = host
             host_data['source'] = 'sonar'
             host_data['last_seen'] = filedate
+            if gzfile == '20131030_hosts.gz': #  this is only done on the very first imported file
+                host_data['first_seen'] = filedate
             queue.put(host_data)
     logger.warning("Closing file {f} at {d}".format(f=gzfile, d=datetime.now()))
 
