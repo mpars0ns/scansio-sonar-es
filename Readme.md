@@ -3,7 +3,7 @@ https://censys.io/. With that being said I think being able to have this data lo
 efforts is useful.
 
 The current implementation is to take the sonar ssl scans https://scans.io/study/sonar.ssl and the umich daily scans 
-~~https://scans.io/series/443-https-tls-full_ipv4 ~~(this data set is no longer valid as of 10/14/2015)
+~~https://scans.io/series/443-https-tls-full_ipv4~~ (this data set is no longer valid as of 10/14/2015)
 and put them in separate indexes:
 
 Certificate Related
