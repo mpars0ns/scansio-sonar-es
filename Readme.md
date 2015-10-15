@@ -26,8 +26,12 @@ The hosts indexes are the SHA1 hash of the certificate to IP mapping with a litt
 asn enrichment (pew pew map anyone?)
 
 #Usage#
+##Install Requirements##
+You will need a few python libraries. Just install them with the following
+`$sudo pip install -r requirements.txt `
+
 ##Update GEOIP##
-You will want to download/update the GeoLite from maxmind. To do that run the update_geoip.sh script
+You will need to download/update the GeoLite from maxmind. To do that run the update_geoip.sh script
 
 `$ sh update_geoip.sh`
 
