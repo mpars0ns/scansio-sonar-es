@@ -66,17 +66,16 @@ def process_scan_certs(q, es):
         if certs == "DONE":
             bulk(es, bulk_certs)
             return True
-        for cert in certs['certs']:
-            newcert = process_cert(cert)
-            if newcert:
-                newcert['import_date'] = certs['time']
-                newcert['source'] = 'sonar'
-                newcert_action = {"_index": "passive-ssl-certs-sonar", "_type": "cert", '_id': newcert['hash_id'],
-                                  '_source': newcert}
-                bulk_certs.append(newcert_action)
-            if len(bulk_certs) == 500:
-                bulk(es, bulk_certs)
-                bulk_certs = []
+        newcert = process_cert(certs['certs'])
+        if newcert:
+            newcert['import_date'] = certs['time']
+            newcert['source'] = 'sonar'
+            newcert_action = {"_index": "passive-ssl-certs-sonar", "_type": "cert", '_id': newcert['hash_id'],
+                              '_source': newcert}
+            bulk_certs.append(newcert_action)
+        if len(bulk_certs) == 500:
+            bulk(es, bulk_certs)
+            bulk_certs = []
 
 
 def parse_certs_file(gzfile, queue):

@@ -413,7 +413,11 @@
           },
           "version" : {
             "type" : "long"
-          }
+          },
+          "sn": {
+            "type" : "string",
+            "index": "analyzed",
+             "analyzer": "keyword"}
         }
       }
     }
