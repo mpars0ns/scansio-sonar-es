@@ -19,7 +19,7 @@ passive-ssl-certs
 passive-ssl-hosts
 
 The certs indexes are the results of parsing the raw base64 certificate that is provided both by sonar and umich in 
-their scans. I initially used some of the code in this <a href="https://gist.github.com/major/9606037gist">gist</a> 
+their scans. I initially used some of the code in this <a href="https://gist.github.com/major/9606037">gist</a> 
 to get my creative juices flowing and have expanded on it from there.
 
 The hosts indexes are the SHA1 hash of the certificate to IP mapping with a little bit of geolocation and 
@@ -55,12 +55,14 @@ Again you can change your server/port as needed. This will start to spider all t
 of the sonar ssl scans. This will take several days to run :) so have it going under screen will be helpful.
 
 The first file you have to grab from sonar is about 25gb the last time I checked. This will take a while to download 
-about 3 hours in my testing. So please be patient.
-
+about 3 hours in my testing. So please be patient. There might be issues with the first initial file from the sonar 
+downloads due to size. I need to do some more testing on that with systems that don't have as much ram as my development
+system. So if you encounter any issues please let me know.
 
 #Licenses#
 
 MaxMind GeoIP Databases used under CC licence
+
 This product includes GeoLite data created by MaxMind, available from maxmind.com.
 
 
