@@ -176,6 +176,7 @@ def main(argv):
                                 os.remove(certfile)
                                 # Now we should optimize each index to max num segments of 1 to help with
                                 # searching/sizing and just over all es happiness
+                                refresh_es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=30)
                                 logger.warning("Optimizing index: {index} at {date}".
                                                format(index='passive-ssl-certs-sonar', date=datetime.now()))
                                 refresh_es.indices.optimize(index='passive-ssl-certs-umich',
