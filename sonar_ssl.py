@@ -124,7 +124,7 @@ def main(argv):
     process_hosts_queue = Queue(maxsize=20000)
     process_certs_queue = Queue(maxsize=20000)
 
-    es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=30)
+    es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=60)
 
     imported_sonar = es.search(index='scansio-sonar-ssl-imported', body={"size": 3000, "query": {"match_all": {}}})
     imported_files = []
@@ -147,19 +147,24 @@ def main(argv):
                                 certfile = scans_file[48:65]
                             if certfile not in imported_files:
                                 logger.warning("We don't have {file} imported lets download it".format(file=certfile))
-                                phys_file = requests.get(scans_file)
-                                newcerts = open('{f}'.format(f=certfile), 'wb')
-                                newcerts.write(phys_file.content)
-                                newcerts.close()
-                                newcerts = open('{f}'.format(f=certfile))
-                                h = hashlib.sha1()
-                                h.update(newcerts.read())
+                                phys_file = requests.get(scans_file, stream=True)
+                                # Need to do this cause some of the files are rather large
+                                with open('{f}'.format(f=certfile), 'wb') as newcerts:
+                                    for chunk in phys_file.iter_content(chunk_size=1024):
+                                        if chunk:
+                                            newcerts.write(chunk)
+                                with open('{f}'.format(f=certfile), 'rb') as fh:
+                                    h = hashlib.sha1()
+                                    while True:
+                                        data = fh.read(8192)
+                                        if not data:
+                                            break
+                                        h.update(data)
                                 sha1 = h.hexdigest()
-                                newcerts.close()
                                 if sha1 == res['fingerprint']:
                                     for w in xrange(workers):
                                         queue_es = Elasticsearch([{u'host': args.server, u'port': args.port}],
-                                                                 timeout=30)
+                                                                 timeout=60)
                                         p = Process(target=process_scan_certs, args=(process_certs_queue, queue_es))
                                         p.daemon = True
                                         p.start()
@@ -176,7 +181,7 @@ def main(argv):
                                 os.remove(certfile)
                                 # Now we should optimize each index to max num segments of 1 to help with
                                 # searching/sizing and just over all es happiness
-                                refresh_es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=30)
+                                refresh_es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=60)
                                 logger.warning("Optimizing index: {index} at {date}".
                                                format(index='passive-ssl-certs-sonar', date=datetime.now()))
                                 refresh_es.indices.optimize(index='passive-ssl-certs-umich',
@@ -186,18 +191,22 @@ def main(argv):
                             if hostsfile not in imported_files:
                                 logger.warning("We don't have {file} imported lets download it".format(file=hostsfile))
                                 phys_host_file = requests.get(scans_file)
-                                newhosts = open('{f}'.format(f=hostsfile), 'wb')
-                                newhosts.write(phys_host_file.content)
-                                newhosts.close()
-                                newhosts = open('{f}'.format(f=hostsfile))
-                                h = hashlib.sha1()
-                                h.update(newhosts.read())
+                                with open('{f}'.format(f=hostsfile), 'wb') as hf:
+                                    for chunk in phys_host_file.iter_content(chunk_size=1024):
+                                        if chunk:
+                                            hf.write(chunk)
+                                with open('{f}'.format(f=hostsfile), 'rb') as fh:
+                                    h = hashlib.sha1()
+                                    while True:
+                                        data = fh.read(8192)
+                                        if not data:
+                                            break
+                                        h.update(data)
                                 sha1 = h.hexdigest()
-                                newhosts.close()
                                 if sha1 == res['fingerprint']:
                                     for w in xrange(workers):
                                         queue_es = Elasticsearch([{u'host': args.server, u'port': args.port}],
-                                                                 timeout=30)
+                                                                 timeout=60)
                                         p = Process(target=process_hosts, args=(process_hosts_queue, queue_es))
                                         p.daemon = True
                                         p.start()
@@ -208,7 +217,7 @@ def main(argv):
                                     #  this is kinda dirty but without looking up everything at insert time (slow)
                                     #  I don't know of a better way to do
                                     #  this based on the number of documents we will have
-                                    update_es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=30)
+                                    update_es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=60)
                                     # construct an elasticsearch query where the filter is looking for any entry
                                     # that is missing the field first_seen
                                     q = {'size': 500, "query": {"match_all": {}},
@@ -235,14 +244,14 @@ def main(argv):
                                     bulk(update_es, bulk_miss)
                                     logger.warning("Importing finished of {f} at {d}".format(f=hostsfile,
                                                    d=datetime.now()))
-                                    es.index(index='scansio-sonar-ssl-imported', doc_type='imported-file', id=certfile,
-                                             body={'file': certfile, 'imported_date': datetime.now(), 'sha1': sha1})
+                                    es.index(index='scansio-sonar-ssl-imported', doc_type='imported-file', id=hostsfile,
+                                             body={'file': hostsfile, 'imported_date': datetime.now(), 'sha1': sha1})
                                 else:
                                     logger.error("SHA1 did not match for {f} it was not imported".format(f=hostsfile))
                                 os.remove(hostsfile)
                                 # Now we should optimize each index to max num segments of 1 to help with
                                 # searching/sizing and just over all es happiness
-                                refresh_es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=30)
+                                refresh_es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=60)
                                 logger.warning("Optimizing index: {index} at {date}".
                                                format(index='passive-ssl-hosts-sonar', date=datetime.now()))
                                 refresh_es.indices.optimize(index='passive-ssl-hosts-sonar',
