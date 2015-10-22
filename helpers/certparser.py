@@ -83,6 +83,8 @@ def process_cert(cert):
             alg = None
         try:
             sn = x509.get_serial_number()
+            # This is to conver from a long int to hex which is what most peopel provide the serial number in
+            sn = '%x' % sn 
         except:
             sn = None
         certificate = {"hash_id": sha1, "md5": md5, "sha1": sha1, 'sha256': sha256, "issuer": issuer_dict,
