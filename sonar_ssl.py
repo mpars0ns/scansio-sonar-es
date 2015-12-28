@@ -29,7 +29,6 @@ DEFAULT_PORT = 9200
 
 def process_hosts(q, es):
     """
-
     :param q: The Queue object that hosts should be pulled off of
     :param es: An Elasticsearch connection. This way each worker has its own connection and you don't have to share it
                across multiple workers/processes
@@ -106,10 +105,27 @@ def parse_hosts_file(gzfile, queue):
             host_data['host'] = host
             host_data['source'] = 'sonar'
             host_data['last_seen'] = filedate
-            if gzfile == '20131030_hosts.gz': #  this is only done on the very first imported file
+            if gzfile == '20131030_hosts.gz':  # this is only done on the very first imported file
                 host_data['first_seen'] = filedate
             queue.put(host_data)
     logger.warning("Closing file {f} at {d}".format(f=gzfile, d=datetime.now()))
+
+
+def update_hosts(q, es):
+    bulk_update_hosts = []
+    while True:
+        hosts = q.get()
+        if hosts == "DONE":
+            bulk(es, bulk_update_hosts)
+            return True
+        last_seen = hosts['_source']['last_seen']
+        first_seen = last_seen
+        action = {"_op_type": "update", "_index": "passive-ssl-hosts-sonar", "_type": "host", "_id": hosts['_id'],
+                  "doc": {'first_seen': first_seen}}
+        bulk_update_hosts.append(action)
+        if len(bulk_update_hosts) == 500:
+            bulk(es, bulk_update_hosts)
+            bulk_update_hosts = []
 
 
 def main(argv):
@@ -123,6 +139,7 @@ def main(argv):
     workers = cpu_count()
     process_hosts_queue = Queue(maxsize=20000)
     process_certs_queue = Queue(maxsize=20000)
+    update_hosts_queue = Queue(maxsize=20000)
 
     es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=60)
 
@@ -220,6 +237,12 @@ def main(argv):
                                     update_es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=60)
                                     # construct an elasticsearch query where the filter is looking for any entry
                                     # that is missing the field first_seen
+                                    # adding a queue processing system here this should hopefully speed things up.
+                                    for work in xrange(workers):
+                                        p = Process(target=update_hosts, args=(update_hosts_queue, update_es))
+                                        p.daemon = True
+                                        p.start()
+
                                     q = {'size': 500, "query": {"match_all": {}},
                                          "filter": {"missing": {"field": "first_seen"}}}
                                     new_updates = update_es.search(index='passive-ssl-hosts-sonar', body=q)
@@ -228,35 +251,26 @@ def main(argv):
                                     # Scan across all the documents missing the first_seen field and bulk update them
                                     missing_first_seen = scan(update_es, query=q, scroll='30m',
                                                               index='passive-ssl-hosts-sonar')
-                                    bulk_miss = []
                                     for miss in missing_first_seen:
-                                        last_seen = miss['_source']['last_seen']
-                                        first_seen = last_seen
-                                        action = {"_op_type": "update", "_index": "passive-ssl-hosts-sonar",
-                                                  "_type": "host", "_id": miss['_id'],
-                                                  "doc": {'first_seen': first_seen}}
-                                        bulk_miss.append(action)
-                                        if len(bulk_miss) == 500:
-                                            bulk(update_es, bulk_miss)
-                                            bulk_miss = []
-
+                                        update_hosts_queue.put(miss)
+                                    logger.warning("Finished updating hosts at {d}".format(d=datetime.now()))
+                                    for w in xrange(workers):
+                                        update_hosts_queue.put("DONE")
                                     #  Get the remaining ones that are less than 500 and the loop has ended
-                                    bulk(update_es, bulk_miss)
                                     logger.warning("Importing finished of {f} at {d}".format(f=hostsfile,
                                                    d=datetime.now()))
                                     es.index(index='scansio-sonar-ssl-imported', doc_type='imported-file', id=hostsfile,
                                              body={'file': hostsfile, 'imported_date': datetime.now(), 'sha1': sha1})
+                                    refresh_es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=60)
+                                    # Now we should optimize each index to max num segments of 1 to help with
+                                    # searching/sizing and just over all es happiness
+                                    logger.warning("Optimizing index: {index} at {date}".
+                                                   format(index='passive-ssl-hosts-sonar', date=datetime.now()))
+                                    refresh_es.indices.optimize(index='passive-ssl-hosts-sonar',
+                                                                max_num_segments=1, request_timeout=7500)
                                 else:
                                     logger.error("SHA1 did not match for {f} it was not imported".format(f=hostsfile))
                                 os.remove(hostsfile)
-                                # Now we should optimize each index to max num segments of 1 to help with
-                                # searching/sizing and just over all es happiness
-                                refresh_es = Elasticsearch([{u'host': args.server, u'port': args.port}], timeout=60)
-                                logger.warning("Optimizing index: {index} at {date}".
-                                               format(index='passive-ssl-hosts-sonar', date=datetime.now()))
-                                refresh_es.indices.optimize(index='passive-ssl-hosts-sonar',
-                                                            max_num_segments=1, request_timeout=7500)
-
         else:
             logger.error("The scans.io/json must have changed or is having issues. I didn't see any studies. Exiting")
             sys.exit()
