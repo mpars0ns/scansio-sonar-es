@@ -253,6 +253,24 @@ def main(argv):
                                                               index='passive-ssl-hosts-sonar')
                                     for miss in missing_first_seen:
                                         update_hosts_queue.put(miss)
+                                    # for some stupid reason I keep missing some at the end of the scan/scroll
+                                    # so going to do them manually
+                                    new_updates = update_es.search(index='passive-ssl-hosts-sonar', body=q)
+                                    logger.warning("Numer of hosts to update is {count}"
+                                                   .format(count=new_updates['hits']['total']))
+                                    missing_first_seen_again = scan(update_es, query=q, scroll='30m',
+                                                              index='passive-ssl-hosts-sonar')
+                                    bulk_update_missed = []
+                                    for m in missing_first_seen_again:
+                                        last_seen = m['_source']['last_seen']
+                                        first_seen = last_seen
+                                        action = {"_op_type": "update", "_index": "passive-ssl-hosts-sonar",
+                                                  "_type": "host", "_id": m['_id'], "doc": {'first_seen': first_seen}}
+                                        bulk_update_missed.append(action)
+                                        if len(bulk_update_missed) == 500:
+                                            bulk(update_es, bulk_update_missed)
+                                            bulk_update_missed = []
+                                    bulk(update_es, bulk_update_missed)
                                     logger.warning("Finished updating hosts at {d}".format(d=datetime.now()))
                                     for w in xrange(workers):
                                         update_hosts_queue.put("DONE")
