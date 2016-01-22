@@ -1,3 +1,3 @@
 pygeoip==0.3.2
 requests
-elasticsearch==2.0.0
+elasticsearch>=2.0.0,<3.0.0

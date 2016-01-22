@@ -8,6 +8,7 @@
           "asn": {"type": "string", "analyzer": "keyword", "index": "analyzed"},
           "country_code": {"type": "string", "analyzer": "keyword", "index": "analyzed"},
           "country_name": {"type": "string", "analyzer": "keyword", "index": "analyzed"},
+          "port": {"type": "integer"},
           "source": {"type": "string"}
         }
       }

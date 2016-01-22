@@ -66,10 +66,15 @@ def main(argv):
     create_host_index(create_es, 'passive-ssl-hosts-umich')
     create_cert_index(create_es, 'passive-ssl-certs-umich')
     create_host_index(create_es, 'passive-ssl-hosts-sonar')
+    create_host_index(create_es, 'passive-ssl-non443-hosts-sonar')
     create_cert_index(create_es, 'passive-ssl-certs-sonar')
-    create_es.indices.put_alias(index="passive-ssl-hosts-umich,passive-ssl-hosts-sonar", name='passive-ssl-hosts')
-    create_es.indices.put_alias(index="passive-ssl-certs-umich,passive-ssl-certs-sonar", name='passive-ssl-certs')
+    create_cert_index(create_es, 'passive-ssl-non443-certs-sonar')
+    create_es.indices.put_alias(index="passive-ssl-hosts-umich,passive-ssl-hosts-sonar,passive-ssl-non443-hosts-sonar",
+                                name='passive-ssl-hosts')
+    create_es.indices.put_alias(index="passive-ssl-certs-umich,passive-ssl-certs-sonar,passive-ssl-non443-certs-sonar",
+                                name='passive-ssl-certs')
     create_sonar_imported_index(create_es, 'scansio-sonar-ssl-imported')
+    create_sonar_imported_index(create_es, 'scansio-sonar-ssl-non443-imported')
     create_sonar_imported_index(create_es, 'scansio-umich-ssl-imported')
 
 if __name__ == "__main__":
