@@ -47,7 +47,6 @@ def process_hosts(q, es):
     :param q: The Queue object that hosts should be pulled off of
     :param es: An Elasticsearch connection. This way each worker has its own connection and you don't have to share it
                across multiple workers/processes
-    :param port: the port associated with the ssl scan that was done (25, 465, 993, 143 etc)
     :return:
     """
     bulk_hosts = []
@@ -268,8 +267,7 @@ def main(argv):
                                                               index='passive-ssl-non443-hosts-sonar')
                                     for miss in missing_first_seen:
                                         update_hosts_queue.put(miss)
-                                    for w in xrange(workers):
-                                        update_hosts_queue.put("DONE")
+
                                     # for some stupid reason I keep missing some at the end of the scan/scroll
                                     # so going to do them manually
                                     new_updates = update_es.search(index='passive-ssl-non443-hosts-sonar', body=q)
@@ -288,6 +286,8 @@ def main(argv):
                                             bulk(update_es, bulk_update_missed)
                                             bulk_update_missed = []
                                     bulk(update_es, bulk_update_missed)
+                                    for w in xrange(workers):
+                                        update_hosts_queue.put("DONE")
                                     logger.warning("Finished updating hosts at {d}".format(d=datetime.now()))
 
                                     #  Get the remaining ones that are less than 500 and the loop has ended
