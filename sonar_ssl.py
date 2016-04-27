@@ -67,7 +67,8 @@ def process_scan_certs(q, es):
             return True
         newcert = process_cert(certs['certs'])
         if newcert:
-            newcert['import_date'] = certs['time']
+            if 'time' in certs:
+                newcert['import_date'] = certs['time']
             newcert['source'] = 'sonar'
             newcert_action = {"_index": "passive-ssl-certs-sonar", "_type": "cert", '_id': newcert['hash_id'],
                               '_source': newcert}
@@ -87,7 +88,8 @@ def parse_certs_file(gzfile, queue):
         for line in certfile:
             raw_cert = dict()
             (certhash, cert) = line.split(',', 1)
-            raw_cert['time'] = datetime.strptime(filedate, "%Y%m%d")
+            if filedate:
+                raw_cert['time'] = datetime.strptime(filedate, "%Y%m%d")
             raw_cert['certs'] = cert
             if raw_cert:
                 queue.put(raw_cert)
