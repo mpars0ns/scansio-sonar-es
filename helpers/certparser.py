@@ -44,36 +44,44 @@ def process_cert(cert):
             bits = pubkey.bits()
         except:
             bits = 0
-        notBefore = x509.get_notBefore()
         try:
-            notBefore = datetime.strptime(notBefore, '%Y%m%d%H%M%SZ')
-            notBefore = notBefore.isoformat()
-        except:
+            notBefore = x509.get_notBefore()
+        except RuntimeError:
+            notBefore = None
+        if notBefore:
             try:
-                notBefore = datetime.strptime(notBefore[:-5], "%Y%m%d%H%M%S")
+                notBefore = datetime.strptime(notBefore, '%Y%m%d%H%M%SZ')
                 notBefore = notBefore.isoformat()
             except:
                 try:
-                    notBefore = datetime.strptime(notBefore, "%Y%m%d%H%M%S")
+                    notBefore = datetime.strptime(notBefore[:-5], "%Y%m%d%H%M%S")
                     notBefore = notBefore.isoformat()
                 except:
-                    logger.error("There is an error with the notBefore time on cert: {cert}".format(cert=sha1))
-                    notBefore=None
-        notAfter = x509.get_notAfter()
+                    try:
+                        notBefore = datetime.strptime(notBefore, "%Y%m%d%H%M%S")
+                        notBefore = notBefore.isoformat()
+                    except:
+                        logger.error("There is an error with the notBefore time on cert: {cert}".format(cert=sha1))
+                        notBefore = None
         try:
-            notAfter = datetime.strptime(notAfter, '%Y%m%d%H%M%SZ')
-            notAfter = notAfter.isoformat()
-        except:
+            notAfter = x509.get_notAfter()
+        except RuntimeError:
+            notAfter = None
+        if notAfter:
             try:
-                notAfter = datetime.strptime(notAfter[:-5], "%Y%m%d%H%M%S")
+                notAfter = datetime.strptime(notAfter, '%Y%m%d%H%M%SZ')
                 notAfter = notAfter.isoformat()
             except:
                 try:
-                    notAfter = datetime.strptime(notAfter, "%Y%m%d%H%M%S")
+                    notAfter = datetime.strptime(notAfter[:-5], "%Y%m%d%H%M%S")
                     notAfter = notAfter.isoformat()
                 except:
-                    logger.error("There is an error with the notAfter time on cert: {cert} ".format(cert=sha1))
-                    notAfter = None
+                    try:
+                        notAfter = datetime.strptime(notAfter, "%Y%m%d%H%M%S")
+                        notAfter = notAfter.isoformat()
+                    except:
+                        logger.error("There is an error with the notAfter time on cert: {cert} ".format(cert=sha1))
+                        notAfter = None
 
         subject_name_hash = x509.subject_name_hash()
         version = x509.get_version()
